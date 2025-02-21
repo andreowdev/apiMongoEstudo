@@ -1,28 +1,15 @@
-import express from "express";
-import cors from "cors";
-import { PrismaClient } from "@prisma/client";
+// server.ts
+import express from 'express';
+import userRoutes from './routes/userRoutes';
+import cors from 'cors'
 
 const app = express();
-const prisma = new PrismaClient();
 
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
-// Criar usuário
-app.post("/users", async (req, res) => {
-  const { name, password } = req.body;
-  try {
-    const user = await prisma.user.create({ data: { name, password } });
-    res.json(user);
-  } catch (error) {
-    res.status(400).json({ error: "Erro ao criar usuário" });
-  }
+app.use('/auth', userRoutes);
+
+app.listen(3001, () => {
+  console.log('Server rodando na porta 3001');
 });
-
-// Listar usuários
-app.get("/users", async (req, res) => {
-  const users = await prisma.user.findMany();
-  res.json(users);
-});
-
-app.listen(3001, () => console.log("🔥 Servidor rodando na porta 3000"));
